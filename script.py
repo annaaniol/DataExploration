@@ -1,4 +1,3 @@
-
 import tweepy
 import csv
 import pandas as pd
@@ -12,20 +11,23 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,wait_on_rate_limit=True)
 
-csvTweet = open('tweet.csv', 'a')
-csvTweetWriter = csv.writer(csvTweet)
-csvUser = open('user.csv', 'a')
-csvUserWriter = csv.writer(csvUser)
-csvLocation = open('location.csv', 'a')
-csvLocationWriter = csv.writer(csvLocation)
+hashtags = ['h1b']
 
-searched_tweets = [status for status in tweepy.Cursor(api.search, q="#h1b").items(1)]
+for hashtag in hashtags:
+    csvFile = open(hashtag+'.csv', 'a')
+    csvWriter = csv.writer(csvFile)
 
-csvTweetWriter.writerow(['id','text','created_at','retweet_count','favorite_count', 'user_id'])
-csvUserWriter.writerow(['id','name','location','friends_count'])
-csvLocationWriter.writerow(['place_type','full_name','country'])
+    searched_tweets = [status for status in tweepy.Cursor(api.search, q='#'+hashtag).items(1)]
+
+    csvWriter.writerow(['tweet_id','tweet_text','tweet_created_at','tweet_retweet_count','tweet_favorite_count',
+        'user_id','user_name','user_location','user_friends_count',
+        'place_type','place_full_name','country'])
 
 for tweet in searched_tweets:
-    csvTweetWriter.writerow([tweet.id, tweet.text, tweet.created_at, tweet.retweet_count, tweet.favorite_count, tweet.user.id])
-    csvUserWriter.writerow([tweet.user.id, tweet.user.name, tweet.user.location, tweet.user.friends_count])
-    #csvLocationWriter.writerow([tweet.place.country])
+    if tweet.place is not None:
+        csvWriter.writerow([tweet.id, tweet.text, tweet.created_at, tweet.retweet_count, tweet.favorite_count,
+        tweet.user.id, tweet.user.name, tweet.user.location, tweet.user.friends_count,
+        tweet.place.place_type, tweet.place.full_name, tweet.place.country])
+    else:
+        csvWriter.writerow([tweet.id, tweet.text, tweet.created_at, tweet.retweet_count, tweet.favorite_count,
+        tweet.user.id, tweet.user.name, tweet.user.location, tweet.user.friends_count])
