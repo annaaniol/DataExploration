@@ -7,10 +7,10 @@ import pandas as pd
 # configure Session class with desired options
 Session = sessionmaker()
 
-hashtags = ['h1b']
+hashtags = ['h1b', 'visa']
 
 for hashtag in hashtags:
-    tweetData = pd.read_csv(hashtag+'.csv', usecols=['tweet_id','tweet_text','tweet_created_at','tweet_retweet_count','tweet_favorite_count'])
+    tweetData = pd.read_csv(hashtag+'.csv', usecols=['tweet_id', 'retweeted', 'tweet_text','tweet_created_at','tweet_retweet_count','tweet_favorite_count'])
     userData = pd.read_csv(hashtag+'.csv', usecols=['user_id','user_name','user_location','user_friends_count'])
     placeData = pd.read_csv(hashtag+'.csv', usecols=['place_type','place_full_name','country'])
 
